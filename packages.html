@@ -1,88 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Packages</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        button { margin-top: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipe Sheet Mobile App</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f2e8;
+      --card: #fffaf0;
+      --text: #1b1712;
+      --muted: #6a5f51;
+      --primary: #b08d57;
+      --primary-dark: #8f6f3f;
+      --line: #d8c8aa;
+      --chip: #f1e3c7;
+      --danger: #8a1f1f;
+      --ink: #16130f;
+      --ink-soft: #24201a;
+      --gold-text: #7b602f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Helvetica Neue", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, #12100c 0%, #1a1611 18%, var(--bg) 18%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .app { max-width: 900px; margin: 0 auto; padding: 1rem; display: grid; gap: 1rem; }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      box-shadow: 0 6px 18px rgba(17, 12, 6, 0.12);
+      padding: 1rem;
+    }
+
+    .card:first-of-type {
+      background: linear-gradient(120deg, var(--ink) 0%, var(--ink-soft) 100%);
+      border: 1px solid #3a3124;
+      color: #f7ebd3;
+    }
+
+    .card:first-of-type .muted { color: #d8c39a; }
+
+    .card:first-of-type code {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f7ebd3;
+      padding: 0.08rem 0.3rem;
+      border-radius: 4px;
+    }
+
+    h1 { margin: 0; font-size: 1.45rem; }
+    h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+    h3 { margin: 0; }
+    p { margin: 0.25rem 0; }
+
+    .muted { color: var(--muted); font-size: 0.92rem; }
+    .grid { display: grid; gap: 0.75rem; }
+    .stack { display: grid; gap: 0.6rem; }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    input, button, textarea, select {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 0.7rem 0.8rem;
+      width: 100%;
+      background: #fffdf8;
+      color: var(--text);
+    }
+
+    button {
+      background: var(--primary);
+      color: #1b1712;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover, button:focus-visible { background: var(--primary-dark); }
+
+    .ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .ghost:hover, .ghost:focus-visible { color: #1b1712; }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+    .recipes { display: grid; gap: 1rem; }
+
+    .category-block {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.85rem;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .category-title {
+      margin: 0 0 0.65rem;
+      color: var(--gold-text);
+      letter-spacing: 0.01em;
+    }
+
+    .recipe {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.9rem;
+      background: #fff;
+      margin-bottom: 0.6rem;
+    }
+
+    .recipe:last-child { margin-bottom: 0; }
+
+    .recipe h3 { margin: 0 0 0.35rem; font-size: 1.05rem; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.4rem 0 0.65rem;
+    }
+
+    .chip {
+      background: var(--chip);
+      color: var(--gold-text);
+      border-radius: 999px;
+      padding: 0.24rem 0.55rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid #e1cfab;
+    }
+
+    code {
+      color: var(--gold-text);
+      background: #f4ead7;
+      padding: 0.06rem 0.25rem;
+      border-radius: 4px;
+    }
+
+    ul, ol { margin: 0.4rem 0 0; padding-left: 1rem; }
+
+    .status { min-height: 1.2rem; font-size: 0.9rem; color: var(--muted); }
+    .status.error { color: var(--danger); font-weight: 600; }
+
+    .empty {
+      text-align: center;
+      padding: 1rem;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+    }
+
+    @media (min-width: 700px) {
+      .row { grid-template-columns: 1fr auto auto; align-items: end; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Packages</h1>
-    <table id="packagesTable">
-        <thead>
-            <tr>
-                <th>Package Name</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <h2>Add/Edit Package</h2>
-    <input type="text" id="packageName" placeholder="Package Name" required />
-    <input type="text" id="packageDescription" placeholder="Description" required />
-    <button id="addButton">Add Package</button>
+  <main class="app">
+    <section class="card stack">
+      <h1>Recipe Sheet Mobile App</h1>
+      <p class="muted">Upload and convert recipes from pictures, spreadsheets, or documents into one consistent recipe style.</p>
+      <p class="muted"><strong>Spreadsheet headers:</strong> <code>name,category,prep_minutes,cook_minutes,servings,ingredients,steps,notes,image_url,ingredient_costs,currency</code></p>
+    </section>
 
-    <script>
-        const packages = JSON.parse(localStorage.getItem('packages')) || [];
-        const packagesTable = document.getElementById('packagesTable').getElementsByTagName('tbody')[0];
-        const packageNameInput = document.getElementById('packageName');
-        const packageDescriptionInput = document.getElementById('packageDescription');
-        const addButton = document.getElementById('addButton');
+    <section class="card stack">
+      <h2>1) Upload your source</h2>
+      <p class="muted">Supported: <strong>CSV/XLS/XLSX</strong>, <strong>TXT/MD/JSON/DOCX</strong>, and <strong>images</strong> (OCR).</p>
+      <div>
+        <label for="sourceFile">Upload file(s)</label>
+        <input id="sourceFile" type="file" accept=".csv,.xls,.xlsx,.txt,.md,.json,.docx,image/*" multiple />
+      </div>
+      <button id="processFiles" type="button">Convert Uploaded Files</button>
+    </section>
 
-        function refreshTable() {
-            packagesTable.innerHTML = '';
-            packages.forEach((pkg, index) => {
-                const row = packagesTable.insertRow();
-                row.insertCell(0).innerHTML = pkg.name;
-                row.insertCell(1).innerHTML = pkg.description;
-                const actionsCell = row.insertCell(2);
-                actionsCell.innerHTML = `<button onclick="editPackage(${index})">Edit</button>`;
-            });
+    <section class="card stack">
+      <h2>2) Spreadsheet URL or pasted recipe text</h2>
+      <div class="row">
+        <div>
+          <label for="csvUrl">Google Sheets CSV URL</label>
+          <input id="csvUrl" type="url" placeholder="https://docs.google.com/spreadsheets/.../export?format=csv" />
+        </div>
+        <button id="loadUrl" type="button">Load URL</button>
+        <button id="downloadTemplate" class="ghost" type="button">Template</button>
+      </div>
+      <div>
+        <label for="rawText">Or paste raw recipe text/document content</label>
+        <textarea id="rawText" rows="6" placeholder="Example:\nName: Lemon Pasta\nCategory: Dinner\nIngredients:\n- Pasta\n- Lemon\nCosts:\n- Pasta=2.00\n- Lemon=0.80\nSteps:\n1. Boil pasta\n2. Mix with lemon"></textarea>
+      </div>
+      <button id="convertText" type="button">Convert Pasted Text</button>
+      <button id="clearData" class="ghost" type="button">Clear All Recipes</button>
+      <div class="status" id="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card stack">
+      <h2>3) Browse by category + total cost</h2>
+      <input id="search" type="search" placeholder="Search by recipe or category" />
+      <div id="recipeList" class="recipes" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+
+  <script>
+    const REQUIRED_HEADERS = [
+      "name", "category", "prep_minutes", "cook_minutes", "servings",
+      "ingredients", "steps", "notes", "image_url"
+    ];
+
+    const statusEl = document.getElementById("status");
+    const fileInput = document.getElementById("sourceFile");
+    const processFilesButton = document.getElementById("processFiles");
+    const csvUrlInput = document.getElementById("csvUrl");
+    const loadUrlButton = document.getElementById("loadUrl");
+    const clearDataButton = document.getElementById("clearData");
+    const searchInput = document.getElementById("search");
+    const recipeList = document.getElementById("recipeList");
+    const downloadTemplateButton = document.getElementById("downloadTemplate");
+    const rawTextEl = document.getElementById("rawText");
+    const convertTextButton = document.getElementById("convertText");
+
+    let recipes = [];
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.classList.toggle("error", isError);
+    }
+
+    function splitPipeList(value) {
+      return (value || "").split("|").map((item) => item.trim()).filter(Boolean);
+    }
+
+    function parseCostList(costString, ingredients = []) {
+      const entries = splitPipeList(costString);
+      if (!entries.length) return [];
+
+      return entries.map((entry, index) => {
+        const [nameRaw, valRaw] = entry.includes("=") ? entry.split("=") : [ingredients[index] || `Item ${index + 1}`, entry];
+        const amount = Number.parseFloat((valRaw || "").replace(/[^0-9.-]/g, ""));
+        return { name: (nameRaw || `Item ${index + 1}`).trim(), amount: Number.isFinite(amount) ? amount : 0 };
+      });
+    }
+
+    function formatCurrency(value, currency = "USD") {
+      try {
+        return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(value || 0);
+      } catch {
+        return `$${(value || 0).toFixed(2)}`;
+      }
+    }
+
+    function parseCSVLine(line) {
+      const out = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+        if (char === '"') {
+          if (inQuotes && next === '"') { current += '"'; i++; }
+          else inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          out.push(current.trim());
+          current = "";
+        } else current += char;
+      }
+      out.push(current.trim());
+      return out;
+    }
+
+    function normalizeRecipe(raw) {
+      const ingredients = Array.isArray(raw.ingredients) ? raw.ingredients : splitPipeList(raw.ingredients);
+      const steps = Array.isArray(raw.steps) ? raw.steps : splitPipeList(raw.steps);
+      const ingredientCosts = Array.isArray(raw.ingredientCosts)
+        ? raw.ingredientCosts
+        : parseCostList(raw.ingredient_costs || raw.ingredientCosts || "", ingredients);
+
+      const totalCost = ingredientCosts.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+
+      return {
+        name: (raw.name || "Untitled Recipe").trim(),
+        category: (raw.category || "Uncategorized").trim(),
+        prepMinutes: raw.prepMinutes || raw.prep_minutes || "",
+        cookMinutes: raw.cookMinutes || raw.cook_minutes || "",
+        servings: raw.servings || "",
+        ingredients,
+        steps,
+        notes: raw.notes || "",
+        imageUrl: raw.imageUrl || raw.image_url || "",
+        ingredientCosts,
+        currency: raw.currency || "USD",
+        totalCost
+      };
+    }
+
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+      if (lines.length < 2) throw new Error("CSV appears empty.");
+
+      const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase());
+      const missing = REQUIRED_HEADERS.filter((header) => !headers.includes(header));
+      if (missing.length) throw new Error(`Missing required header(s): ${missing.join(", ")}`);
+
+      return lines.slice(1).map((line) => {
+        const values = parseCSVLine(line);
+        const row = {};
+        headers.forEach((header, index) => { row[header] = values[index] || ""; });
+        return normalizeRecipe(row);
+      }).filter((r) => r.name);
+    }
+
+    function parseFreeformRecipes(text) {
+      const chunks = text.split(/\n\s*\n+/).map((chunk) => chunk.trim()).filter(Boolean);
+      const result = [];
+
+      chunks.forEach((chunk, idx) => {
+        const lines = chunk.split(/\n/).map((l) => l.trim()).filter(Boolean);
+        const recipe = {
+          name: `Recipe ${idx + 1}`,
+          category: "Uncategorized",
+          ingredients: [],
+          steps: [],
+          ingredientCosts: [],
+          notes: "",
+          currency: "USD"
+        };
+
+        let mode = "";
+        lines.forEach((line) => {
+          const lower = line.toLowerCase();
+          if (lower.startsWith("name:")) { recipe.name = line.slice(5).trim(); mode = ""; return; }
+          if (lower.startsWith("category:")) { recipe.category = line.slice(9).trim() || "Uncategorized"; mode = ""; return; }
+          if (lower.startsWith("prep:")) { recipe.prepMinutes = line.slice(5).replace(/[^0-9]/g, ""); mode = ""; return; }
+          if (lower.startsWith("cook:")) { recipe.cookMinutes = line.slice(5).replace(/[^0-9]/g, ""); mode = ""; return; }
+          if (lower.startsWith("servings:")) { recipe.servings = line.slice(9).trim(); mode = ""; return; }
+          if (lower.startsWith("currency:")) { recipe.currency = line.slice(9).trim() || "USD"; mode = ""; return; }
+
+          if (lower.startsWith("ingredients:")) { mode = "ingredients"; return; }
+          if (lower.startsWith("steps:") || lower.startsWith("instructions:")) { mode = "steps"; return; }
+          if (lower.startsWith("costs:") || lower.startsWith("ingredient costs:")) { mode = "costs"; return; }
+          if (lower.startsWith("notes:")) { mode = "notes"; recipe.notes = line.split(":").slice(1).join(":").trim(); return; }
+
+          const clean = line.replace(/^[-*\d.)\s]+/, "").trim();
+          if (!clean) return;
+
+          if (mode === "ingredients") recipe.ingredients.push(clean);
+          else if (mode === "steps") recipe.steps.push(clean);
+          else if (mode === "costs") {
+            const [nameRaw, amountRaw] = clean.includes("=") ? clean.split("=") : clean.split(/\s+-\s+|\s+\$?/);
+            const amount = Number.parseFloat((amountRaw || "").replace(/[^0-9.-]/g, ""));
+            recipe.ingredientCosts.push({ name: (nameRaw || `Item ${recipe.ingredientCosts.length + 1}`).trim(), amount: Number.isFinite(amount) ? amount : 0 });
+          } else recipe.notes = `${recipe.notes} ${clean}`.trim();
+        });
+
+        if (recipe.name || recipe.ingredients.length || recipe.steps.length) result.push(normalizeRecipe(recipe));
+      });
+
+      if (!result.length) throw new Error("No recipe content could be parsed from text.");
+      return result;
+    }
+
+    function parseJSONRecipes(text) {
+      const parsed = JSON.parse(text);
+      const list = Array.isArray(parsed) ? parsed : [parsed];
+      const normalized = list.map((entry) => normalizeRecipe(entry));
+      if (!normalized.length) throw new Error("JSON did not include recipes.");
+      return normalized;
+    }
+
+    function mergeRecipes(newRecipes) {
+      recipes = [...recipes, ...newRecipes];
+      localStorage.setItem("recipes", JSON.stringify(recipes));
+      renderRecipes(searchInput.value);
+      setStatus(`Added ${newRecipes.length} recipe(s). Total: ${recipes.length}.`);
+    }
+
+    function recipeCard(recipe) {
+      const ingredients = recipe.ingredients.length ? `<ul>${recipe.ingredients.map((ingredient) => `<li>${ingredient}</li>`).join("")}</ul>` : "<p class=\"muted\">No ingredients listed.</p>";
+      const steps = recipe.steps.length ? `<ol>${recipe.steps.map((step) => `<li>${step}</li>`).join("")}</ol>` : "<p class=\"muted\">No steps listed.</p>";
+      const image = recipe.imageUrl ? `<img src="${recipe.imageUrl}" alt="${recipe.name}" style="width:100%;border-radius:10px;margin:.4rem 0 .6rem;max-height:210px;object-fit:cover;" loading="lazy">` : "";
+      const costBreakdown = recipe.ingredientCosts.length
+        ? `<ul>${recipe.ingredientCosts.map((item) => `<li>${item.name}: ${formatCurrency(item.amount, recipe.currency)}</li>`).join("")}</ul>`
+        : "<p class=\"muted\">No ingredient costs listed.</p>";
+
+      return `
+        <article class="recipe">
+          <h3>${recipe.name}</h3>
+          <div class="chips">
+            <span class="chip">${recipe.category}</span>
+            ${recipe.prepMinutes ? `<span class="chip">Prep ${recipe.prepMinutes}m</span>` : ""}
+            ${recipe.cookMinutes ? `<span class="chip">Cook ${recipe.cookMinutes}m</span>` : ""}
+            ${recipe.servings ? `<span class="chip">Serves ${recipe.servings}</span>` : ""}
+            <span class="chip">Total ${formatCurrency(recipe.totalCost, recipe.currency)}</span>
+          </div>
+          ${image}
+          <p><strong>Ingredients</strong></p>
+          ${ingredients}
+          <p><strong>Steps</strong></p>
+          ${steps}
+          <p><strong>Cost Breakdown</strong></p>
+          ${costBreakdown}
+          ${recipe.notes ? `<p><strong>Notes:</strong> ${recipe.notes}</p>` : ""}
+        </article>
+      `;
+    }
+
+    function renderRecipes(query = "") {
+      const q = query.trim().toLowerCase();
+      const filtered = q
+        ? recipes.filter((recipe) => recipe.name.toLowerCase().includes(q) || recipe.category.toLowerCase().includes(q))
+        : recipes;
+
+      if (!filtered.length) {
+        recipeList.innerHTML = '<div class="empty">No recipes found. Upload picture, spreadsheet, or document to begin.</div>';
+        return;
+      }
+
+      const groups = filtered.reduce((acc, recipe) => {
+        const category = recipe.category || "Uncategorized";
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(recipe);
+        return acc;
+      }, {});
+
+      recipeList.innerHTML = Object.entries(groups)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([category, list]) => `
+          <section class="category-block">
+            <h3 class="category-title">${category}</h3>
+            ${list.map(recipeCard).join("")}
+          </section>
+        `)
+        .join("");
+    }
+
+    function loadStoredData() {
+      const raw = localStorage.getItem("recipes");
+      if (!raw) return renderRecipes();
+      try {
+        const parsed = JSON.parse(raw);
+        recipes = Array.isArray(parsed) ? parsed.map(normalizeRecipe) : [];
+        renderRecipes();
+        setStatus(`Loaded ${recipes.length} stored recipe(s).`);
+      } catch {
+        recipes = [];
+        localStorage.removeItem("recipes");
+        renderRecipes();
+      }
+    }
+
+    function downloadTemplate() {
+      const templateRows = [
+        "name,category,prep_minutes,cook_minutes,servings,ingredients,steps,notes,image_url,ingredient_costs,currency",
+        'Margherita Pizza,Italian,20,15,2,"pizza dough|tomato sauce|mozzarella|basil","Roll dough|Spread sauce|Add toppings|Bake",Classic and simple,https://images.unsplash.com/photo-1574071318508-1cdbab80d002,"pizza dough=3.50|tomato sauce=1.75|mozzarella=4.00|basil=0.60",USD',
+        'Overnight Oats,Breakfast,5,0,1,"rolled oats|milk|chia seeds|berries","Mix ingredients|Refrigerate overnight|Top with berries",Meal prep favorite,https://images.unsplash.com/photo-1517673400267-0251440c45dc,"rolled oats=0.80|milk=0.60|chia seeds=0.70|berries=1.40",USD'
+      ];
+
+      const blob = new Blob([templateRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "recipe-conversion-template.csv";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    async function loadFromUrl() {
+      const url = csvUrlInput.value.trim();
+      if (!url) return setStatus("Paste a CSV URL first.", true);
+
+      setStatus("Loading from URL...");
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Request failed (${response.status})`);
+        const csvText = await response.text();
+        mergeRecipes(parseCSV(csvText));
+      } catch (error) {
+        setStatus(`Could not load URL: ${error.message}`, true);
+      }
+    }
+
+    async function parseSpreadsheet(file) {
+      const buffer = await file.arrayBuffer();
+      if (file.name.toLowerCase().endsWith(".csv")) {
+        return parseCSV(new TextDecoder().decode(buffer));
+      }
+      const workbook = XLSX.read(buffer, { type: "array" });
+      const firstSheet = workbook.SheetNames[0];
+      const csv = XLSX.utils.sheet_to_csv(workbook.Sheets[firstSheet]);
+      return parseCSV(csv);
+    }
+
+    async function parseDocument(file) {
+      const lower = file.name.toLowerCase();
+      if (lower.endsWith(".json")) return parseJSONRecipes(await file.text());
+      if (lower.endsWith(".docx")) {
+        const result = await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+        return parseFreeformRecipes(result.value);
+      }
+      return parseFreeformRecipes(await file.text());
+    }
+
+    async function parseImageWithOCR(file) {
+      setStatus(`Running OCR for ${file.name}... this can take a moment.`);
+      const { data } = await Tesseract.recognize(file, "eng");
+      return parseFreeformRecipes(data.text);
+    }
+
+    async function processUploadedFiles() {
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) return setStatus("Choose at least one file to convert.", true);
+
+      let added = 0;
+      for (const file of files) {
+        const name = file.name.toLowerCase();
+        try {
+          let parsed = [];
+          if (name.endsWith(".csv") || name.endsWith(".xls") || name.endsWith(".xlsx")) parsed = await parseSpreadsheet(file);
+          else if (name.endsWith(".txt") || name.endsWith(".md") || name.endsWith(".json") || name.endsWith(".docx")) parsed = await parseDocument(file);
+          else if (file.type.startsWith("image/")) parsed = await parseImageWithOCR(file);
+          else throw new Error("Unsupported file type.");
+
+          mergeRecipes(parsed);
+          added += parsed.length;
+        } catch (error) {
+          setStatus(`Skipped ${file.name}: ${error.message}`, true);
         }
+      }
+      if (added) setStatus(`Conversion complete. Added ${added} recipe(s).`);
+    }
 
-        function editPackage(index) {
-            packageNameInput.value = packages[index].name;
-            packageDescriptionInput.value = packages[index].description;
-            addButton.onclick = () => updatePackage(index);
-        }
+    processFilesButton.addEventListener("click", processUploadedFiles);
+    loadUrlButton.addEventListener("click", loadFromUrl);
+    searchInput.addEventListener("input", (event) => renderRecipes(event.target.value));
+    downloadTemplateButton.addEventListener("click", downloadTemplate);
 
-        function updatePackage(index) {
-            packages[index] = {
-                name: packageNameInput.value,
-                description: packageDescriptionInput.value
-            };
-            localStorage.setItem('packages', JSON.stringify(packages));
-            refreshTable();
-            clearInputs();
-            addButton.onclick = addPackage;
-        }
+    convertTextButton.addEventListener("click", () => {
+      const text = rawTextEl.value.trim();
+      if (!text) return setStatus("Paste recipe text first.", true);
+      try {
+        mergeRecipes(parseFreeformRecipes(text));
+      } catch (error) {
+        setStatus(`Could not convert text: ${error.message}`, true);
+      }
+    });
 
-        function addPackage() {
-            const newPackage = {
-                name: packageNameInput.value,
-                description: packageDescriptionInput.value
-            };
-            packages.push(newPackage);
-            localStorage.setItem('packages', JSON.stringify(packages));
-            refreshTable();
-            clearInputs();
-        }
+    clearDataButton.addEventListener("click", () => {
+      recipes = [];
+      localStorage.removeItem("recipes");
+      renderRecipes();
+      setStatus("Recipes cleared.");
+    });
 
-        function clearInputs() {
-            packageNameInput.value = '';
-            packageDescriptionInput.value = '';
-        }
-
-        document.addEventListener('DOMContentLoaded', refreshTable);
-        addButton.onclick = addPackage;
-    </script>
+    loadStoredData();
+  </script>
 </body>
 </html>
